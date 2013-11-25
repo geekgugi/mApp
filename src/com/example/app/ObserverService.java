@@ -40,7 +40,9 @@ public class ObserverService extends Service {
     // indicates whether onRebind should be used
     boolean mAllowRebind; 
 
-    public static String  MESSAGE = "I am busy ! Call me later, Thank you.";
+    private String  message = new String("Hello ! Iam working -- Sagar");
+    private int  messageId;
+    private DataSource mDataSource;
 
     @Override
     public void onCreate() {
@@ -50,23 +52,24 @@ public class ObserverService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        final TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        Log.i(TAG, "Service started");
 
+        Log.i(TAG, "Service started");
         Toast.makeText(getBaseContext(), "Service has been started..",
                 Toast.LENGTH_SHORT).show();
+        
+        final TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        // Open the database again ? Bullshit design
+        mDataSource= new DataSource(this, "mApp.db", null, 1);
+        mDataSource.open();
+        messageId = mDataSource.getStatusId(message);
+        
 
-        PhoneStateListener phoneStateListener = new PhoneStateListener() 
-        {
+        PhoneStateListener phoneStateListener = new PhoneStateListener() {
             @Override
-            public void onCallStateChanged(int state, String incomingNumber) 
-            {
+            public void onCallStateChanged(int state, String incomingNumber) {
                 super.onCallStateChanged(state, incomingNumber);
 
-                if (state == TelephonyManager.CALL_STATE_RINGING)
-                {
-                    Toast.makeText(getBaseContext(), "Ready To send message",
-                            Toast.LENGTH_LONG).show();
+                if (state == TelephonyManager.CALL_STATE_RINGING) {
                     //Java Reflections
                     try {
                         Class<?> c  = Class.forName(mgr.getClass().getName());
@@ -84,7 +87,8 @@ public class ObserverService extends Service {
                         m.invoke(telephonyService); 
                         // Send message
                         SmsManager sms = SmsManager.getDefault();
-                        sms.sendTextMessage(incomingNumber, null, MESSAGE, null, null);
+                        sms.sendTextMessage(incomingNumber, null, message, null, null);
+                        mDataSource.createLog(messageId, incomingNumber);
                     } catch (NoSuchMethodException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();

@@ -18,12 +18,16 @@
  */
 package com.example.app;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Intent;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 /**
@@ -41,16 +45,40 @@ public class HomeActivity extends Activity implements OnClickListener {
     private final static String TAG = HomeActivity.class.getName();
     private Button startSerivce = null;
     private Button stopSerivce = null;
+    private Status mStatus = null;
+    private DataSource mDataSource = null;
+    private int mStatusId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        // Shall we add the templates to databases here ?
+        // bad design though ?
+        mDataSource= new DataSource(this, "mApp.db", null, 1);
+        mDataSource.open();
+
+        mStatusId = mDataSource.createStatus("Hello ! Iam working -- Sagar");
+        
+        List<CallLog> logs = mDataSource.getAllLogs();
+
+        // use the SimpleCursorAdapter to show the
+        // elements in a ListView
+        ArrayAdapter<CallLog> adapter = new ArrayAdapter<CallLog>(this,
+            android.R.layout.simple_list_item_1, logs);
+        setListAdapter(adapter);
+        mDataSource.close();
+
         startSerivce = (Button) findViewById(R.id.buttonStart);
         startSerivce.setOnClickListener(this);
         stopSerivce = (Button) findViewById(R.id.buttonStop);
         stopSerivce.setOnClickListener(this);
+    }
+
+    private void setListAdapter(ArrayAdapter<CallLog> adapter) {
+        // TODO Auto-generated method stub
+        
     }
 
     @Override

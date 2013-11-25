@@ -1,12 +1,12 @@
 package com.example.app;
 
-public class Log {
+public class CallLog {
 
     private int _id;
     private String caller_number;
     private String callee_status_id;
 
-    public Log() {
+    public CallLog() {
     }
 
     public int getId() {
