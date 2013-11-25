@@ -1,3 +1,21 @@
+/*
+ *  Copyright 2013-2014 Sagar Gugwad <saagar.gugwad@gmail.com>
+ *
+ *  This file is part of mApp project.
+ *
+ *  mApp is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  mApp is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with mApp.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.example.app;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,13 +27,12 @@ import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
-
 import android.util.Log;
 import android.widget.Toast;
 
 public class ObserverService extends Service {
 
-    private final static String TAG = "ObserverService";
+    private final static String TAG = ObserverService.class.getName();
     // indicates how to behave if the service is killed
     int mStartMode;
     // interface for clients that bind
