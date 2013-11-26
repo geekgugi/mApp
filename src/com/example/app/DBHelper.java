@@ -35,8 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
      *  '_id | caller_number | callee_status_id '
      *  '---------------------------------------'
      *  ' 1  | 7829730769    |   12             '
-     *  '                                       '
-     *  '----------------------------------------
+     *  '---------------------------------------'
      *                                ^
      *                                |
      *                                |
@@ -58,13 +57,13 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE1_CREATE = "create table "
             + TABLE1_NAME + "(" 
             + TABLE1_COLUMN_ID + " integer primary key autoincrement,"
-            + TABLE1_COLUMN_CALLER + " text not null " 
-            + TABLE1_COLUMN_STATUS_ID + "integer"
-            + "FOREIGN KEY(TABLE1_COLUMN_STATUS_ID) REFERENCES TABLE2_NAME(TABLE2_COLUMN_ID)"
+            + TABLE1_COLUMN_CALLER + " text not null, " 
+            + TABLE1_COLUMN_STATUS_ID + " integer "
+            + "FOREIGN_KEY "+ TABLE1_COLUMN_STATUS_ID +" REFERENCES "+TABLE2_NAME+"("+TABLE2_COLUMN_ID+")"
             + ");";
 
     private static final String TABLE2_CREATE = "create table "
-            + TABLE1_NAME + "(" 
+            + TABLE2_NAME + "(" 
             + TABLE2_COLUMN_ID + " integer primary key autoincrement,"
             + TABLE2_COLUMN_STATUS_MESSAGE + " text not null " 
             + ");";
@@ -79,14 +78,15 @@ public class DBHelper extends SQLiteOpenHelper {
         // Note Table1 references Table2, good practice to create 
         // referenced table first ?
         db.execSQL(TABLE2_CREATE);
+        Log.d(TAG, TABLE1_CREATE);
         db.execSQL(TABLE1_CREATE);
-     }
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        
+
         Log.i(TAG, "Upgrading database from version " + oldVersion + " to "
-                    + newVersion + ", which will destroy all old data");
+                + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE1_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE2_NAME);
         onCreate(db);

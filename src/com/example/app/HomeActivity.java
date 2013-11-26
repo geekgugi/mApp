@@ -22,12 +22,10 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 /**
@@ -45,9 +43,11 @@ public class HomeActivity extends Activity implements OnClickListener {
     private final static String TAG = HomeActivity.class.getName();
     private Button startSerivce = null;
     private Button stopSerivce = null;
+    private Button viewLog = null;
+
     private Status mStatus = null;
     private DataSource mDataSource = null;
-    private int mStatusId;
+    private int mStatusId = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,28 +56,21 @@ public class HomeActivity extends Activity implements OnClickListener {
 
         // Shall we add the templates to databases here ?
         // bad design though ?
-        mDataSource= new DataSource(this, "mApp.db", null, 1);
+        mDataSource= new DataSource(getApplicationContext());
         mDataSource.open();
 
         mStatusId = mDataSource.createStatus("Hello ! Iam working -- Sagar");
         
         List<CallLog> logs = mDataSource.getAllLogs();
 
-        // use the SimpleCursorAdapter to show the
-        // elements in a ListView
-        ArrayAdapter<CallLog> adapter = new ArrayAdapter<CallLog>(this,
-            android.R.layout.simple_list_item_1, logs);
-        setListAdapter(adapter);
         mDataSource.close();
 
         startSerivce = (Button) findViewById(R.id.buttonStart);
         startSerivce.setOnClickListener(this);
         stopSerivce = (Button) findViewById(R.id.buttonStop);
         stopSerivce.setOnClickListener(this);
-    }
-
-    private void setListAdapter(ArrayAdapter<CallLog> adapter) {
-        // TODO Auto-generated method stub
+        viewLog = (Button) findViewById(R.id.buttonViewLog);
+        viewLog.setOnClickListener(this);
         
     }
 
@@ -87,10 +80,13 @@ public class HomeActivity extends Activity implements OnClickListener {
             Log.i(TAG, "Activity starting service..");
             Intent serviceIntent = new Intent(this, ObserverService.class);
             startService(serviceIntent);
-        } else {
+        } else if (stopSerivce == v) {
             Intent in = new Intent(this, ObserverService.class);
             in.setAction("stop");
             stopService(in);
+        } else {
+            Intent viewActivity = new Intent(this, ViewLogActivity.class);
+            startActivity(viewActivity);
         }
     }
 }

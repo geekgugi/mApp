@@ -24,13 +24,12 @@ import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 
 public class DataSource {
 
-    private static final String DB_VERSION = "1.0";
+    private static final int DB_VERSION = 1;
+    public static final String DATABASE_NAME = "mApp.db";
     private SQLiteDatabase database;
     private DBHelper dbHelper;
     private String[] table1AllColumns = { DBHelper.TABLE1_COLUMN_ID,
@@ -39,14 +38,16 @@ public class DataSource {
     private String[] table2AllColumns = { DBHelper.TABLE2_COLUMN_ID,
             DBHelper.TABLE2_COLUMN_STATUS_MESSAGE};
 
-    public DataSource(Context context, String name, CursorFactory factory,
-            int version) {
-        dbHelper = new DBHelper(context, name, factory, version);
+    public DataSource(Context context) {
+        dbHelper = new DBHelper(context, DATABASE_NAME, null, DB_VERSION);
     }
 
 
-    public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
+    public SQLiteDatabase open() {
+        if (database == null) {
+            database = dbHelper.getWritableDatabase();
+        }
+        return database;
     }
 
     public void close() {
@@ -77,7 +78,8 @@ public class DataSource {
     public int getStatusId(String statusMessage) {
         String[] columns = {DBHelper.TABLE2_COLUMN_ID};
         Cursor cursor =  database.query(DBHelper.TABLE2_NAME,
-                columns, "WHERE " + DBHelper.TABLE2_COLUMN_STATUS_MESSAGE +"="+statusMessage, null,null, null, null);
+                columns, DBHelper.TABLE2_COLUMN_STATUS_MESSAGE +"='"+statusMessage+"'", null,null, null, null);
+        cursor.moveToFirst();
         return cursor.getInt(0);
     }
 

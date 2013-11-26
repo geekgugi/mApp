@@ -59,7 +59,7 @@ public class ObserverService extends Service {
         
         final TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         // Open the database again ? Bullshit design
-        mDataSource= new DataSource(this, "mApp.db", null, 1);
+        mDataSource= new DataSource(getApplicationContext());
         mDataSource.open();
         messageId = mDataSource.getStatusId(message);
         

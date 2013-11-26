@@ -36,6 +36,10 @@
             android:name="com.example.app.DBHelper"
             android:label="@string/title_activity_dbhelper" >
         </activity>
+        <activity
+            android:name="com.example.app.ViewLogActivity"
+            android:label="@string/title_activity_view_log" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" >
